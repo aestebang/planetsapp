@@ -3,7 +3,7 @@
  * Permite filtrar, buscar y ordenar los planetas, así como marcarlos como favoritos.
  * @param {boolean} showOnlyFavorites - Si es true, solo muestra los planetas marcados como favoritos
  */
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import {
   View,
   FlatList,
@@ -11,6 +11,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
+  Animated,
 } from "react-native";
 import { usePlanets } from "../context/PlanetsContext";
 import { useFavorites } from "../hooks/useFavorites";
@@ -31,6 +32,7 @@ export default function CardPlanet({ showOnlyFavorites = false }) {
   const { favorites, toggleFavorite, isFavorite, loadFavorites } =
     useFavorites();
   const [sortOrder, setSortOrder] = useState("asc"); // Controla el orden alfabético (ascendente/descendente)
+  const rotateAnim = useRef(new Animated.Value(0)).current;
 
   // Cargar favoritos cuando el componente obtiene el foco
   useFocusEffect(
@@ -59,8 +61,22 @@ export default function CardPlanet({ showOnlyFavorites = false }) {
   });
 
   const toggleSortOrder = () => {
-    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+    const newOrder = sortOrder === "asc" ? "desc" : "asc";
+    setSortOrder(newOrder);
+
+    Animated.sequence([
+      Animated.timing(rotateAnim, {
+        toValue: newOrder === "asc" ? 0 : 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
   };
+
+  const rotate = rotateAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "180deg"],
+  });
 
   return (
     <View style={styles.mainContainer}>
@@ -69,16 +85,22 @@ export default function CardPlanet({ showOnlyFavorites = false }) {
           value={searchText}
           onChangeText={setSearchText}
           placeholder="Buscar planeta..."
+          style={styles.searchContainer}
         />
         <TouchableOpacity onPress={toggleSortOrder} style={styles.sortButton}>
-          <Ionicons
-            name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
-            size={24}
-            color="#6EC1E4"
-          />
+          <Animated.View style={{ transform: [{ rotate }] }}>
+            <Ionicons
+              name={sortOrder === "asc" ? "arrow-up" : "arrow-down"}
+              size={24}
+              color="#6EC1E4"
+            />
+          </Animated.View>
+          <Text style={styles.sortButtonText}>
+            {sortOrder === "asc" ? "A-Z" : "Z-A"}
+          </Text>
         </TouchableOpacity>
       </View>
-      <FlatList
+      <Animated.FlatList
         data={sortedPlanets}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
@@ -107,14 +129,24 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
     gap: 10,
-    width: "80%",
+    width: "100%",
+  },
+  searchContainer: {
+    flex: 1,
   },
   sortButton: {
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
     backgroundColor: "rgba(30, 30, 30, 0.9)",
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
+    gap: 5,
+    minWidth: 80,
+  },
+  sortButtonText: {
+    color: "#6EC1E4",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   container: {
     gap: 10,

@@ -20,7 +20,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.andresguema.planetsapp"
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -28,6 +29,12 @@
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "e42d8360-889e-471e-a2c9-0e0f5289edb7"
+      }
+    }
   }
 }
