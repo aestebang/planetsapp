@@ -8,7 +8,7 @@ import {
   Pressable,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 
 const CARD_WIDTH = Dimensions.get("window").width / 2 - 20;
@@ -17,22 +17,30 @@ const ItemPlanet = ({ item, images, isFavorite, onToggleFavorite }) => {
   const router = useRouter();
 
   const handlePress = () => {
-    // if (router.isReady) {
-      router.push({
-        pathname: "/detailPlanet",
-        params: { planet: JSON.stringify(item) },
-      });
-    // }
+    router.push({
+      pathname: "/detailPlanet",
+      params: {
+        id: item.id,
+        name: item.englishName,
+        type: item.bodyType,
+        temp: item.avgTemp,
+        gravity: item.gravity,
+        mass: item.mass ? JSON.stringify(item.mass) : null,
+        density: item.density,
+        radius: item.equaRadius,
+        orbit: item.sideralOrbit,
+        aroundPlanet: item.aroundPlanet
+          ? JSON.stringify(item.aroundPlanet)
+          : null,
+        discoveredBy: item.discoveredBy,
+        discoveryDate: item.discoveryDate,
+        image: images[item.englishName],
+      },
+    });
   };
+
   return (
     <View style={styles.cardContainer}>
-      {/* <Link
-        href={{
-          pathname: "/detailPlanet",
-          params: { planet: JSON.stringify(item) },
-        }}
-        asChild
-      > */}
       <Pressable style={styles.cardContent} onPress={handlePress}>
         <LinearGradient
           colors={["rgba(30, 30, 30, 0.9)", "rgba(30, 30, 30, 0.7)"]}
@@ -44,9 +52,7 @@ const ItemPlanet = ({ item, images, isFavorite, onToggleFavorite }) => {
                 images[item.englishName]
                   ? { uri: images[item.englishName] }
                   : {
-                      uri:
-                        "https://via.placeholder.com/300x300/000000/6EC1E4?text=" +
-                        item.englishName,
+                      uri: `https://via.placeholder.com/300x300/000000/6EC1E4?text=${item.englishName}`,
                     }
               }
               style={styles.image}
@@ -65,7 +71,6 @@ const ItemPlanet = ({ item, images, isFavorite, onToggleFavorite }) => {
           </View>
         </LinearGradient>
       </Pressable>
-      {/* </Link> */}
       <Pressable style={styles.favoriteButton} onPress={onToggleFavorite}>
         <Ionicons
           name={isFavorite ? "star" : "star-outline"}

@@ -10,6 +10,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 
+/**
+ * Componente que muestra los detalles detallados de un planeta.
+ * Incluye información como temperatura, gravedad, densidad, radio y más.
+ * @param {Object} planetData - Datos del planeta a mostrar
+ */
 const PlanetDetails = () => {
   return (
     <ScrollView style={styles.container}>
@@ -75,7 +80,13 @@ const PlanetDetails = () => {
   );
 };
 
-export default PlanetDetails;
+/**
+ * Componente que renderiza un elemento de información individual
+ * @param {Object} props - Propiedades del componente
+ * @param {string} props.title - Título del elemento de información
+ * @param {string} props.value - Valor a mostrar
+ * @param {string} props.icon - Emoji o ícono a mostrar junto al elemento
+ */
 const InfoItem = ({ title, value, icon }) => (
   <View style={styles.infoItem}>
     <Text style={styles.infoIcon}>{icon}</Text>
@@ -142,3 +153,5 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
 });
+
+export default PlanetDetails;
